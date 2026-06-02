@@ -5,23 +5,28 @@ import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
 import { EditableLocalLoginForm } from '@/editable/components/EditableLocalAuthForms'
 
 export async function generateMetadata(): Promise<Metadata> {
-  return buildPageMetadata({ path: '/login', title: 'Login', description: 'Local login page for this public site.' })
+  return buildPageMetadata({ path: '/login', title: 'Member login', description: 'Login to manage local classified activity on capsigrow.' })
 }
 
 export default function LoginPage() {
   return (
     <EditableSiteShell>
-      <main className="bg-[var(--editable-page-bg,#fff7ee)] text-[var(--editable-page-text,#2f1d16)]">
-        <section className="mx-auto grid min-h-[calc(100vh-12rem)] max-w-[var(--editable-container)] items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1fr_0.9fr] lg:px-8">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.28em] opacity-55">Member access</p>
-            <h1 className="mt-5 max-w-xl text-5xl font-black leading-[0.98] tracking-[-0.07em] sm:text-6xl">Welcome back to a calmer publishing space.</h1>
-            <p className="mt-6 max-w-lg text-sm leading-8 opacity-70">This login works locally using browser storage, so testers can create an account and sign in without backend auth.</p>
+      <main className="bg-white text-[#333]">
+        <section className="bg-[#c9f0ff]">
+          <div className="mx-auto max-w-[1160px] px-4 py-3 text-sm">
+            <Link href="/" className="text-[#0088ff]">Home</Link> <span className="text-[#a6a6a6]">\</span> Login
           </div>
-          <div className="rounded-[2rem] border border-[var(--editable-border)] bg-white/80 p-6 shadow-[0_24px_70px_rgba(16,36,31,0.12)] backdrop-blur sm:p-8">
-            <h2 className="text-2xl font-black tracking-[-0.04em]">Login</h2>
+        </section>
+        <section className="mx-auto grid min-h-[calc(100vh-16rem)] max-w-[1160px] items-center gap-8 px-4 py-10 lg:grid-cols-[1fr_420px]">
+          <div>
+            <p className="text-sm font-bold uppercase text-[#2098d4]">Member access</p>
+            <h1 className="mt-4 max-w-2xl text-4xl font-normal leading-tight">Sign in to manage your saved ads, listing enquiries and local marketplace activity.</h1>
+            <p className="mt-5 max-w-xl text-sm leading-7 text-[#666]">Use your capsigrow account to keep track of classifieds, seller messages and posted ad details from one place.</p>
+          </div>
+          <div className="rounded border border-[#d6dce1] bg-white p-6 shadow-[0_3px_24px_rgba(0,0,0,0.12)]">
+            <h2 className="border-b-2 border-[#2da9e8] pb-3 text-2xl font-normal">Login</h2>
             <EditableLocalLoginForm />
-            <p className="mt-5 text-sm opacity-70">New here? <Link href="/signup" className="font-black underline-offset-4 hover:underline">Create an account</Link></p>
+            <p className="mt-5 text-sm text-[#666]">New here? <Link href="/signup" className="font-bold text-[#0088ff] underline-offset-4 hover:underline">Create an account</Link></p>
           </div>
         </section>
       </main>

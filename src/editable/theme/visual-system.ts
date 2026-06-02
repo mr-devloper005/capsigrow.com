@@ -1,154 +1,117 @@
 import { slot4BrandConfig } from './brand.config'
 
 export type Slot4VisualPreset =
-  | 'editorial-paper'
-  | 'luxury-atelier'
-  | 'brutalist-index'
-  | 'organic-journal'
-  | 'tech-directory'
-  | 'retro-bulletin'
-  | 'visual-gallery'
+  | 'classified-board'
+  | 'city-directory'
+  | 'deal-market'
+  | 'service-index'
+  | 'local-notice'
 
 export const visualPresets = {
-  'editorial-paper': {
-    label: 'Editorial Paper',
-    mood: 'calm magazine authority',
-    fontDirection: 'serif headlines with quiet sans body',
+  'classified-board': {
+    label: 'Classified Board',
+    mood: 'fast, local, practical',
+    fontDirection: 'clean sans with clear listing metadata',
     colors: {
-      background: '#f7efe3',
-      foreground: '#201711',
-      muted: '#7b6253',
-      primary: '#261811',
-      accent: '#b76e45',
-      surface: '#fffaf2',
-    },
-    shape: 'soft editorial cards with fine borders',
-  },
-  'luxury-atelier': {
-    label: 'Luxury Atelier',
-    mood: 'premium, restrained, polished',
-    fontDirection: 'high-contrast display headings with spacious tracking',
-    colors: {
-      background: '#0f1110',
-      foreground: '#f6ead8',
-      muted: '#b8aa94',
-      primary: '#d7b56d',
-      accent: '#7f1d1d',
-      surface: '#181a17',
-    },
-    shape: 'large dark panels, gold hairlines, generous negative space',
-  },
-  'brutalist-index': {
-    label: 'Brutalist Index',
-    mood: 'bold, raw, memorable',
-    fontDirection: 'condensed headings, mono labels, hard rhythm',
-    colors: {
-      background: '#f2f0e8',
-      foreground: '#111111',
-      muted: '#55524a',
-      primary: '#111111',
-      accent: '#ff4d00',
+      background: '#ffffff',
+      foreground: '#333333',
+      muted: '#66717c',
+      primary: '#2098d4',
+      accent: '#ff5353',
       surface: '#ffffff',
     },
-    shape: 'sharp edges, thick borders, offset blocks',
+    shape: 'blue header, compact cards, squared modules and clear dividers',
   },
-  'organic-journal': {
-    label: 'Organic Journal',
-    mood: 'warm, natural, trustworthy',
-    fontDirection: 'rounded serif or humanist sans with soft captions',
+  'city-directory': {
+    label: 'City Directory',
+    mood: 'organized, trustworthy, location-first',
+    fontDirection: 'readable sans with compact labels',
     colors: {
-      background: '#f4efe5',
-      foreground: '#263021',
-      muted: '#68705a',
-      primary: '#415b32',
-      accent: '#c47c51',
-      surface: '#fffaf0',
-    },
-    shape: 'rounded cards, natural spacing, calm texture',
-  },
-  'tech-directory': {
-    label: 'Tech Directory',
-    mood: 'clean, fast, useful',
-    fontDirection: 'modern sans with crisp mono data accents',
-    colors: {
-      background: '#f6f9fc',
-      foreground: '#101827',
-      muted: '#5f6b7a',
-      primary: '#0f172a',
-      accent: '#00a6ff',
+      background: '#f7fbfe',
+      foreground: '#24313c',
+      muted: '#657586',
+      primary: '#1f8fc8',
+      accent: '#7fc850',
       surface: '#ffffff',
     },
-    shape: 'clean grids, pill filters, sharp information hierarchy',
+    shape: 'directory rows, location badges and practical side panels',
   },
-  'retro-bulletin': {
-    label: 'Retro Bulletin',
-    mood: 'playful, local, energetic',
-    fontDirection: 'chunky headings with friendly body type',
+  'deal-market': {
+    label: 'Deal Market',
+    mood: 'bright, active, price-aware',
+    fontDirection: 'straightforward sans with bold price cues',
     colors: {
-      background: '#fff3c4',
-      foreground: '#2b1d12',
-      muted: '#7b5736',
-      primary: '#2b1d12',
-      accent: '#e85d2a',
-      surface: '#fff8da',
+      background: '#ffffff',
+      foreground: '#2b2b2b',
+      muted: '#6f747b',
+      primary: '#2098d4',
+      accent: '#bf16bd',
+      surface: '#ffffff',
     },
-    shape: 'stickers, tabs, framed modules, playful dividers',
+    shape: 'offer cards, image-led rows and strong price blocks',
   },
-  'visual-gallery': {
-    label: 'Visual Gallery',
-    mood: 'cinematic, image-led, immersive',
-    fontDirection: 'minimal sans with oversized display moments',
+  'service-index': {
+    label: 'Service Index',
+    mood: 'useful, calm, support-focused',
+    fontDirection: 'neutral sans with clear hierarchy',
     colors: {
-      background: '#07101f',
-      foreground: '#f8fbff',
-      muted: '#a9b6c8',
-      primary: '#8df0c8',
-      accent: '#f2a0ff',
-      surface: '#101b2d',
+      background: '#f5f5f5',
+      foreground: '#303030',
+      muted: '#666666',
+      primary: '#2098d4',
+      accent: '#91a5a8',
+      surface: '#ffffff',
     },
-    shape: 'dark cards, large media, glass overlays',
+    shape: 'service panels, category lists and helpful footer blocks',
+  },
+  'local-notice': {
+    label: 'Local Notice',
+    mood: 'simple, public, easy to scan',
+    fontDirection: 'system sans with direct labels',
+    colors: {
+      background: '#ffffff',
+      foreground: '#333333',
+      muted: '#777777',
+      primary: '#2098d4',
+      accent: '#ffb000',
+      surface: '#ffffff',
+    },
+    shape: 'notice rows, bordered content blocks and compact action buttons',
   },
 } as const
 
 export const visualSystem = {
   productKind: slot4BrandConfig.productKind,
-  recommendedPreset:
-    slot4BrandConfig.productKind === 'visual'
-      ? 'visual-gallery'
-      : slot4BrandConfig.productKind === 'editorial'
-        ? 'editorial-paper'
-        : slot4BrandConfig.productKind === 'directory'
-          ? 'tech-directory'
-          : 'organic-journal',
+  recommendedPreset: 'classified-board',
   radius: {
-    sm: '0.75rem',
-    md: '1.25rem',
-    lg: '2rem',
-    xl: '2.75rem',
+    sm: '0.25rem',
+    md: '0.375rem',
+    lg: '0.5rem',
+    xl: '0.75rem',
   },
   motion: {
-    pageLoad: 'animate-in fade-in slide-in-from-bottom-4 duration-700',
-    cardHover: 'transition duration-300 hover:-translate-y-1 hover:shadow-xl',
-    softHover: 'transition duration-300 hover:opacity-85',
+    pageLoad: 'animate-in fade-in duration-300',
+    cardHover: 'transition duration-200 hover:-translate-y-0.5 hover:shadow-lg',
+    softHover: 'transition duration-200 hover:opacity-85',
     reduceMotionSafe: 'motion-reduce:transform-none motion-reduce:transition-none',
   },
   typography: {
-    eyebrow: 'text-xs font-semibold uppercase tracking-[0.24em]',
-    heroTitle: 'text-5xl font-semibold tracking-[-0.06em] sm:text-6xl lg:text-7xl',
-    sectionTitle: 'text-3xl font-semibold tracking-[-0.04em] sm:text-4xl',
-    body: 'text-base leading-8',
-    caption: 'text-xs font-medium uppercase tracking-[0.18em]',
+    eyebrow: 'text-sm font-bold uppercase tracking-wide',
+    heroTitle: 'text-3xl font-normal leading-tight sm:text-4xl',
+    sectionTitle: 'text-xl font-bold',
+    body: 'text-base leading-7',
+    caption: 'text-xs font-bold uppercase tracking-wide',
   },
   surfaces: {
-    glass: 'border border-white/15 bg-white/10 backdrop-blur-xl',
-    paper: 'border border-black/10 bg-white shadow-[0_24px_70px_rgba(15,23,42,0.08)]',
-    quiet: 'border border-black/10 bg-black/[0.03]',
-    dark: 'border border-white/10 bg-black/30 shadow-[0_24px_70px_rgba(0,0,0,0.25)]',
+    glass: 'border border-white/20 bg-white/10 backdrop-blur',
+    paper: 'border border-[#d6dce1] bg-white shadow-[0_3px_24px_rgba(0,0,0,0.1)]',
+    quiet: 'border border-[#e5e5e5] bg-[#f7f7f7]',
+    dark: 'border border-white/10 bg-black/45 shadow-[0_10px_28px_rgba(0,0,0,0.22)]',
   },
   layout: {
-    page: 'mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8',
-    sectionY: 'py-12 sm:py-16 lg:py-20',
-    cardGrid: 'grid gap-5 sm:grid-cols-2 lg:grid-cols-3',
+    page: 'mx-auto w-full max-w-[1160px] px-4',
+    sectionY: 'py-10',
+    cardGrid: 'grid gap-7 lg:grid-cols-2',
   },
 } as const
 

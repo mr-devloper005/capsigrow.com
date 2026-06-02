@@ -1,52 +1,68 @@
 import Link from 'next/link'
-import type { CSSProperties } from 'react'
-import { ArrowUpRight } from 'lucide-react'
-import { SITE_CONFIG } from '@/lib/site-config'
-import { globalContent } from '@/editable/content/global.content'
+import { Facebook, Rss, Twitter } from 'lucide-react'
+import logo from '@/editable/assets/capsigrow-logo.png'
+
+const footerDomain = 'capsigrow.com'
+
+const footerCategories = [
+  'Electronics & Gadgets',
+  'Air Conditioners & Coolers',
+  'Mobiles & Accessories',
+  'Computers - Hardware',
+  'Cameras',
+  'Real Estate',
+  'Property for sale',
+  'Property for Rent',
+  'Commercial Space',
+  'Home & Living',
+  'Office Supplies',
+  'Food Items',
+  'Sports Items',
+  'Clothing',
+  'Professional & Home Services',
+  'Architects',
+  'Restaurants',
+  'Beauty Parlours',
+  'Computer - IT',
+  'Event Services',
+  'Financial & Legal Services',
+  'Other Services',
+]
 
 export function EditableFooter() {
-  const footerVars = { '--editable-footer-bg': 'var(--editable-page-bg, #fffaf3)', '--editable-footer-text': 'var(--editable-page-text, #241915)' } as CSSProperties
-  const taskLinks = SITE_CONFIG.tasks.filter((task) => task.enabled)
-  const year = new Date().getFullYear()
-
   return (
-    <footer style={footerVars} className="border-t border-[var(--editable-border)] bg-[var(--editable-footer-bg)] text-[var(--editable-footer-text)]">
-      <div className="mx-auto grid max-w-[var(--editable-container)] gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr] lg:px-8">
-        <div>
-          <Link href="/" className="inline-flex items-center gap-3">
-            <span className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl border border-[var(--editable-border)] bg-white">
-              <img src="/favicon.png?v=20260413" alt={SITE_CONFIG.name} className="h-9 w-9 object-contain" />
+    <footer className="bg-[#f4f4f4] text-[#222]">
+      <div className="mx-auto max-w-[1180px] px-4 py-8">
+        <p className="text-[10px] leading-5">
+          {footerCategories.map((item, index) => (
+            <span key={item}>
+              <Link href="/classified" className="font-semibold hover:text-[#2098d4]">{item}</Link>
+              {index < footerCategories.length - 1 ? ' | ' : ' | '}
             </span>
-            <span className="text-lg font-black tracking-[-0.04em]">{SITE_CONFIG.name}</span>
-          </Link>
-          <p className="mt-4 max-w-md text-sm leading-7 opacity-70">{globalContent.footer?.description || SITE_CONFIG.description}</p>
-        </div>
+          ))}
+          <Link href="/classified" className="font-bold">view all items</Link>
+        </p>
 
-        <div>
-          <h3 className="text-xs font-black uppercase tracking-[0.22em] opacity-55">Explore</h3>
-          <div className="mt-4 grid gap-2">
-            {taskLinks.map((task) => (
-              <Link key={task.key} href={task.route} className="inline-flex items-center gap-2 text-sm font-bold opacity-75 hover:opacity-100">
-                {task.label} <ArrowUpRight className="h-3.5 w-3.5" />
-              </Link>
-            ))}
+        <div className="mt-10 grid gap-8 text-center md:grid-cols-2">
+          <div>
+            <img src={typeof logo === 'string' ? logo : logo.src} alt="capsigrow logo" className="mx-auto mb-4 h-16 w-16 rounded-full object-cover shadow-[0_4px_18px_rgba(32,152,212,0.25)]" />
+            <h3 className="text-xl font-normal">Pages</h3>
+            <div className="mt-3 grid gap-1 text-sm">
+              <Link href="/contact">Contact Us</Link>
+              <Link href="/about">About Us</Link>
+              <Link href="/login">Login</Link>
+              <Link href="/signup">Sign Up</Link>
+            </div>
           </div>
-        </div>
-
-        <div>
-          <h3 className="text-xs font-black uppercase tracking-[0.22em] opacity-55">Site</h3>
-          <div className="mt-4 grid gap-2">
-            {[
-              ['About', '/about'],
-              ['Contact', '/contact'],
-            ].map(([label, href]) => (
-              <Link key={href} href={href} className="text-sm font-bold opacity-75 hover:opacity-100">{label}</Link>
-            ))}
-          </div>
+        
         </div>
       </div>
-      <div className="border-t border-[var(--editable-border)] px-4 py-5 text-center text-xs font-bold opacity-55">
-        © {year} {SITE_CONFIG.name}. All rights reserved.
+      <div className="bg-[#2098d4] px-4 py-5 text-sm text-white">
+        <div className="mx-auto max-w-[1180px]">
+          Copyright capsigrow &nbsp;|&nbsp; All Rights Reserved &nbsp;|&nbsp;
+          <Link href="/" className="underline">{footerDomain}</Link>
+          &nbsp;|&nbsp; 24x7 support &nbsp;|&nbsp; Email us : info[at]{footerDomain}
+        </div>
       </div>
     </footer>
   )

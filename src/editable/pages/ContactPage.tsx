@@ -1,100 +1,48 @@
 'use client'
 
-import { Building2, FileText, Image as ImageIcon, Mail, MapPin, Phone, Sparkles, Bookmark } from 'lucide-react'
+import { Building2, Mail, MapPin, Phone } from 'lucide-react'
+import Link from 'next/link'
 import { pagesContent } from '@/editable/content/pages.content'
-import { getFactoryState } from '@/design/factory/get-factory-state'
-import { getProductKind } from '@/design/factory/get-product-kind'
 import { EditableContactLeadForm } from '@/editable/components/EditableContactLeadForm'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
 
-function getTone(kind: ReturnType<typeof getProductKind>) {
-  if (kind === 'directory') {
-    return {
-      shell: 'bg-[#f8fbff] text-slate-950',
-      panel: 'border border-slate-200 bg-white',
-      soft: 'border border-slate-200 bg-slate-50',
-      muted: 'text-slate-600',
-      action: 'bg-slate-950 text-white hover:bg-slate-800',
-    }
-  }
-  if (kind === 'editorial') {
-    return {
-      shell: 'bg-[#fbf6ee] text-[#241711]',
-      panel: 'border border-[#dcc8b7] bg-[#fffdfa]',
-      soft: 'border border-[#e6d6c8] bg-[#fff4e8]',
-      muted: 'text-[#6e5547]',
-      action: 'bg-[#241711] text-[#fff1e2] hover:bg-[#3a241b]',
-    }
-  }
-  if (kind === 'visual') {
-    return {
-      shell: 'bg-[#07101f] text-white',
-      panel: 'border border-white/10 bg-white/6',
-      soft: 'border border-white/10 bg-white/5',
-      muted: 'text-slate-300',
-      action: 'bg-[#8df0c8] text-[#07111f] hover:bg-[#77dfb8]',
-    }
-  }
-  return {
-    shell: 'bg-[#f7f1ea] text-[#261811]',
-    panel: 'border border-[#ddcdbd] bg-[#fffaf4]',
-    soft: 'border border-[#e8dbce] bg-[#f3e8db]',
-    muted: 'text-[#71574a]',
-    action: 'bg-[#5b2b3b] text-[#fff0f5] hover:bg-[#74364b]',
-  }
-}
+const lanes = [
+  { icon: Building2, title: 'Listing help', body: 'Ask about posting, updating, or organizing classified ads across products, property, jobs and services.' },
+  { icon: MapPin, title: 'Category and location support', body: 'Tell us when a city, region, or category needs clearer placement for local visitors.' },
+  { icon: Phone, title: 'Seller and buyer questions', body: 'Send marketplace questions about contact details, ad visibility, safety information, or account access.' },
+]
 
 export default function ContactPage() {
-  const { recipe } = getFactoryState()
-  const productKind = getProductKind(recipe)
-  const tone = getTone(productKind)
-
-  const lanes =
-    productKind === 'directory'
-      ? [
-          { icon: Building2, title: 'Business onboarding', body: 'Add listings, verify operational details, and bring your business surface live quickly.' },
-          { icon: Phone, title: 'Partnership support', body: 'Talk through bulk publishing, local growth, and operational setup questions.' },
-          { icon: MapPin, title: 'Coverage requests', body: 'Need a new geography or category lane? We can shape the directory around it.' },
-        ]
-      : productKind === 'editorial'
-        ? [
-            { icon: FileText, title: 'Editorial submissions', body: 'Pitch essays, columns, and long-form ideas that fit the publication.' },
-            { icon: Mail, title: 'Newsletter partnerships', body: 'Coordinate sponsorships, collaborations, and issue-level campaigns.' },
-            { icon: Sparkles, title: 'Contributor support', body: 'Get help with voice, formatting, and publication workflow questions.' },
-          ]
-        : productKind === 'visual'
-          ? [
-              { icon: ImageIcon, title: 'Creator collaborations', body: 'Discuss gallery launches, creator features, and visual campaigns.' },
-              { icon: Sparkles, title: 'Licensing and use', body: 'Reach out about usage rights, commercial requests, and visual partnerships.' },
-              { icon: Mail, title: 'Media kits', body: 'Request creator decks, editorial support, or visual feature placement.' },
-            ]
-          : [
-              { icon: Bookmark, title: 'Collection submissions', body: 'Suggest resources, boards, and links that deserve a place in the library.' },
-              { icon: Mail, title: 'Resource partnerships', body: 'Coordinate curation projects, reference pages, and link programs.' },
-              { icon: Sparkles, title: 'Curator support', body: 'Need help organizing shelves, collections, or profile-connected boards?' },
-            ]
-
   return (
-    <EditableSiteShell className={tone.shell}>
-      <main className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-        <section className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
+    <EditableSiteShell>
+      <main className="bg-white text-[#333]">
+        <section className="bg-[#c9f0ff]">
+          <div className="mx-auto max-w-[1160px] px-4 py-3 text-sm">
+            <Link href="/" className="text-[#0088ff]">Home</Link> <span className="text-[#a6a6a6]">\</span> Contact
+          </div>
+        </section>
+        <section className="mx-auto grid max-w-[1160px] gap-8 px-4 py-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] opacity-70">{pagesContent.contact.eyebrow}</p>
-            <h1 className="mt-4 text-5xl font-semibold tracking-[-0.05em]">{pagesContent.contact.title}</h1>
-            <p className={`mt-5 max-w-2xl text-sm leading-8 ${tone.muted}`}>{pagesContent.contact.description}</p>
+            <p className="text-sm font-bold uppercase text-[#2098d4]">{pagesContent.contact.eyebrow}</p>
+            <h1 className="mt-4 text-4xl font-normal leading-tight">{pagesContent.contact.title}</h1>
+            <p className="mt-5 max-w-2xl text-sm leading-8 text-[#666]">{pagesContent.contact.description}</p>
             <div className="mt-8 space-y-4">
               {lanes.map((lane) => (
-                <div key={lane.title} className={`rounded-[1.6rem] p-5 ${tone.soft}`}>
-                  <lane.icon className="h-5 w-5" />
-                  <h2 className="mt-3 text-xl font-semibold">{lane.title}</h2>
-                  <p className={`mt-2 text-sm leading-7 ${tone.muted}`}>{lane.body}</p>
+                <div key={lane.title} className="rounded border border-[#d6dce1] bg-white p-5 shadow-[0_2px_14px_rgba(0,0,0,0.08)]">
+                  <lane.icon className="h-7 w-7 text-[#2098d4]" />
+                  <h2 className="mt-3 text-xl font-normal">{lane.title}</h2>
+                  <p className="mt-2 text-sm leading-7 text-[#666]">{lane.body}</p>
                 </div>
               ))}
             </div>
+            <div className="mt-6 rounded bg-[#f5f5f5] p-5 text-sm leading-7">
+              <Mail className="mr-2 inline h-5 w-5 text-[#2098d4]" />
+              For clear support, include the ad title, category, location and contact email in your message.
+            </div>
           </div>
 
-          <div className={`rounded-[2rem] p-7 ${tone.panel}`}>
-            <h2 className="text-2xl font-semibold">{pagesContent.contact.formTitle}</h2>
+          <div className="rounded border border-[#d6dce1] bg-white p-6 shadow-[0_3px_24px_rgba(0,0,0,0.12)]">
+            <h2 className="border-b-2 border-[#2da9e8] pb-3 text-2xl font-normal">{pagesContent.contact.formTitle}</h2>
             <EditableContactLeadForm />
           </div>
         </section>
