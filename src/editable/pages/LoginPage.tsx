@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { buildPageMetadata } from '@/lib/seo'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
 import { EditableLocalLoginForm } from '@/editable/components/EditableLocalAuthForms'
+import { pagesContent } from '@/editable/content/pages.content'
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildPageMetadata({ path: '/login', title: 'Member login', description: 'Login to manage local classified activity on capsigrow.' })

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { buildPageMetadata } from '@/lib/seo'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
 import { EditableLocalSignupForm } from '@/editable/components/EditableLocalAuthForms'
+import { pagesContent } from '@/editable/content/pages.content'
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildPageMetadata({ path: '/signup', title: 'Create classified account', description: 'Create an account to manage capsigrow classified ads and local marketplace activity.' })

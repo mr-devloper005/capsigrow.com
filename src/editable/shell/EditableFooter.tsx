@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { Facebook, Rss, Twitter } from 'lucide-react'
 import logo from '@/editable/assets/capsigrow-logo.png'
