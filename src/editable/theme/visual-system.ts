@@ -97,7 +97,7 @@ export const visualSystem = {
   },
   typography: {
     eyebrow: 'text-sm font-bold uppercase tracking-wide',
-    heroTitle: 'text-3xl font-normal leading-tight sm:text-4xl',
+    heroTitle: 'text-5xl font-normal leading-tight sm:text-4xl',
     sectionTitle: 'text-xl font-bold',
     body: 'text-base leading-7',
     caption: 'text-xs font-bold uppercase tracking-wide',
@@ -109,7 +109,7 @@ export const visualSystem = {
     dark: 'border border-white/10 bg-black/45 shadow-[0_10px_28px_rgba(0,0,0,0.22)]',
   },
   layout: {
-    page: 'mx-auto w-full max-w-[1160px] px-4',
+    page: 'mx-auto w-full max-w-7xl px-4',
     sectionY: 'py-10',
     cardGrid: 'grid gap-7 lg:grid-cols-2',
   },
