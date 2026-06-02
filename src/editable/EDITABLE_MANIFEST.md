@@ -1,6 +1,6 @@
-# Slot 4 Editable Manifest
+# Editable UI Manifest
 
-Slot 4 is now a reference-ready editable UI architecture.
+This folder contains the editable capsigrow classified marketplace UI architecture.
 
 ## Contract
 
