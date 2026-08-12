@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, Filter, Search } from 'lucide-react'
+import { ChevronRight, MapPin, Plus, Search, Settings2, Tag } from 'lucide-react'
 import { buildPageMetadata } from '@/lib/seo'
 import { fetchSiteFeed } from '@/lib/site-connector'
 import { buildPostUrl, getPostTaskKey } from '@/lib/task-data'
@@ -9,6 +9,7 @@ import { SITE_CONFIG, type TaskKey } from '@/lib/site-config'
 import type { SitePost } from '@/lib/site-connector'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
 import { pagesContent } from '@/editable/content/pages.content'
+import { classifiedFallbackImage } from '@/editable/cards/PostCards'
 
 export const revalidate = 3
 
@@ -20,8 +21,18 @@ export async function generateMetadata(): Promise<Metadata> {
   })
 }
 
-const stripHtml = (value: string) => value.replace(/<[^>]*>/g, ' ')
-const compactText = (value: unknown) => typeof value === 'string' ? stripHtml(value).replace(/\s+/g, ' ').trim().toLowerCase() : ''
+const stripHtml = (value: string) => {
+  let s = value
+  for (let i = 0; i < 2; i++) {
+    s = s
+      .replace(/&#(\d+);/g, (_m: string, code: string) => String.fromCharCode(Number(code)))
+      .replace(/&#x([0-9a-f]+);/gi, (_m: string, hex: string) => String.fromCharCode(parseInt(hex, 16)))
+      .replace(/&amp;/gi, '&').replace(/&quot;/gi, '"').replace(/&#39;/g, "'").replace(/&lt;/gi, '<').replace(/&gt;/gi, '>')
+      .replace(/<[^>]*>/g, ' ')
+  }
+  return s.replace(/\s+/g, ' ').trim()
+}
+const compactText = (value: unknown) => typeof value === 'string' ? stripHtml(value).toLowerCase() : ''
 const getContent = (post: SitePost) => post.content && typeof post.content === 'object' ? post.content as Record<string, unknown> : {}
 const getImage = (post: SitePost) => {
   const content = getContent(post)
@@ -30,7 +41,24 @@ const getImage = (post: SitePost) => {
   return media || compactRaw(content.featuredImage) || compactRaw(content.image) || compactRaw(content.thumbnail) || images || ''
 }
 const compactRaw = (value: unknown) => typeof value === 'string' ? value.trim() : ''
-const summaryOf = (post: SitePost) => post.summary || compactRaw(getContent(post).description) || compactRaw(getContent(post).excerpt) || ''
+const summaryOf = (post: SitePost, limit = 145) => {
+  const raw = post.summary || compactRaw(getContent(post).description) || compactRaw(getContent(post).excerpt) || ''
+  const clean = stripHtml(raw)
+  if (!clean) return 'Open this ad to view price, location, seller and service details.'
+  return clean.length > limit ? `${clean.slice(0, limit).trim()}...` : clean
+}
+const categoryOf = (post: SitePost) => {
+  const content = getContent(post)
+  return (typeof content.category === 'string' && content.category) || post?.tags?.[0] || 'Classified'
+}
+const fieldOf = (post: SitePost, keys: string[]) => {
+  const content = getContent(post)
+  for (const key of keys) {
+    const value = content[key]
+    if (typeof value === 'string' && value.trim()) return value.trim()
+  }
+  return ''
+}
 
 const matches = (post: SitePost, query: string, category: string, task: string) => {
   const content = getContent(post)
@@ -49,25 +77,70 @@ const matches = (post: SitePost, query: string, category: string, task: string) 
 function SearchResultCard({ post, index }: { post: SitePost; index: number }) {
   const task = getPostTaskKey(post) as TaskKey | null
   const href = task ? buildPostUrl(task, post.slug) : `/article/${post.slug}`
-  const image = getImage(post)
+  const image = getImage(post) || classifiedFallbackImage
   const summary = summaryOf(post)
-  const taskLabel = SITE_CONFIG.tasks.find((item) => item.key === task)?.label || 'Post'
-  const strong = index % 5 === 0
+  const category = categoryOf(post)
+  const price = fieldOf(post, ['price', 'amount', 'budget']) || 'Check with seller'
+  const location = fieldOf(post, ['location', 'address', 'city']) || 'Local area'
+  const variant = index % 5
+
+  if (variant === 0 && index < 20) {
+    return (
+      <Link href={href} className="group col-span-full block overflow-hidden rounded border border-[#e5e5e5] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.14)] transition hover:-translate-y-0.5">
+        <div className="grid min-h-[200px] md:grid-cols-[280px_1fr]">
+          <div className="relative min-h-[180px] bg-[#eef3f6]">
+            <img src={image} alt="" className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]" />
+            <span className="absolute left-3 top-2 rounded bg-white/90 px-2 py-1 text-xs font-bold text-[#2098d4]">{category}</span>
+          </div>
+          <div className="min-w-0 p-5">
+            <h3 className="line-clamp-2 text-xl font-normal leading-snug text-[#0088ff]">{post.title}</h3>
+            <p className="mt-3 line-clamp-3 text-sm leading-6 text-[#656565]">{summary}</p>
+            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm text-[#333]">
+              <span><Tag className="mr-1 inline h-3.5 w-3.5 text-[#ffb000]" />Price: {price}</span>
+              <span><MapPin className="mr-1 inline h-3.5 w-3.5 text-[#58b957]" />Location: {location}</span>
+            </div>
+          </div>
+        </div>
+      </Link>
+    )
+  }
+
+  if (variant === 1) {
+    return (
+      <Link href={href} className="group block overflow-hidden rounded border border-[#e5e5e5] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.14)] transition hover:-translate-y-0.5">
+        <div className="relative aspect-[2.5/1] bg-[#eef3f6]">
+          <img src={image} alt="" className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]" />
+          <span className="absolute left-3 top-2 rounded bg-white/90 px-2 py-1 text-xs font-bold text-[#2098d4]">{category}</span>
+        </div>
+        <div className="p-4">
+          <h3 className="line-clamp-2 text-lg font-normal leading-snug text-[#0088ff]">{post.title}</h3>
+          <p className="mt-2 line-clamp-2 text-sm leading-6 text-[#656565]">{summary}</p>
+        </div>
+        <div className="flex flex-wrap gap-x-2 gap-y-1 bg-[#f7f7f7] px-4 py-3 text-sm text-[#333]">
+          <span className="text-[#0088ff]">Category: {category}</span>
+          <span><Tag className="inline h-3.5 w-3.5 text-[#ffb000]" /> Price: {price}</span>
+          <span><MapPin className="inline h-3.5 w-3.5 text-[#58b957]" /> Location: {location}</span>
+        </div>
+      </Link>
+    )
+  }
 
   return (
-    <Link href={href} className={`group block overflow-hidden rounded-[2rem] border border-[var(--editable-border)] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-2xl ${strong ? 'md:col-span-2' : ''}`}>
-      {image ? (
-        <div className={`relative overflow-hidden bg-black ${strong ? 'aspect-[16/7]' : 'aspect-[16/10]'}`}>
-          <img src={image} alt="" className="h-full w-full object-cover opacity-90 transition duration-500 group-hover:scale-105" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-          <span className="absolute left-4 top-4 rounded-full bg-white px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-black">{taskLabel}</span>
+    <Link href={href} className="group block overflow-hidden rounded border border-[#e5e5e5] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.14)] transition hover:-translate-y-0.5">
+      <div className="grid min-h-[150px] grid-cols-[130px_1fr]">
+        <div className="relative bg-[#eef3f6]">
+          <img src={image} alt="" className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]" />
+          <span className="absolute left-2 top-2 rounded bg-white/90 px-2 py-1 text-xs font-bold text-[#2098d4]">{category}</span>
         </div>
-      ) : null}
-      <div className="p-5 sm:p-6">
-        {!image ? <span className="rounded-full bg-[var(--editable-page-text,#211713)] px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-white">{taskLabel}</span> : null}
-        <h2 className="mt-4 line-clamp-3 text-2xl font-black leading-[0.95] tracking-[-0.06em] text-[var(--editable-page-text,#211713)]">{post.title}</h2>
-        {summary ? <p className="mt-4 line-clamp-3 text-sm font-semibold leading-7 text-[var(--editable-page-text,#211713)]/65">{summary}</p> : null}
-        <span className="mt-5 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] opacity-60 group-hover:opacity-100">Open result <ArrowRight className="h-4 w-4" /></span>
+        <div className="min-w-0 p-3">
+          <h3 className="line-clamp-2 text-lg font-normal leading-snug text-[#0088ff]">{post.title}</h3>
+          <p className="mt-2 line-clamp-3 text-sm leading-6 text-[#656565]">{summary}</p>
+        </div>
+      </div>
+      <div className="flex flex-wrap gap-x-2 gap-y-1 bg-[#f7f7f7] px-4 py-3 text-sm text-[#333]">
+        <span className="text-[#0088ff]">Category: {category}</span>
+        <span><Tag className="inline h-3.5 w-3.5 text-[#ffb000]" /> Price: {price}</span>
+        <span><MapPin className="inline h-3.5 w-3.5 text-[#58b957]" /> Location: {location}</span>
       </div>
     </Link>
   )
@@ -87,53 +160,66 @@ export default async function SearchPage({ searchParams }: { searchParams?: Prom
 
   return (
     <EditableSiteShell>
-      <main className="min-h-screen bg-[var(--editable-page-bg,#fff7ee)] text-[var(--editable-page-text,#2f1d16)]">
-        <section className="mx-auto max-w-[var(--editable-container)] px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
-          <div className="grid gap-8 rounded-[2.5rem] border border-[var(--editable-border)] bg-white/70 p-6 shadow-[0_30px_90px_rgba(15,23,42,0.08)] backdrop-blur md:grid-cols-[0.8fr_1.2fr] lg:p-10">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.28em] opacity-55">{pagesContent.search.hero.badge}</p>
-              <h1 className="mt-5 text-5xl font-black leading-[0.92] tracking-[-0.08em] sm:text-7xl">{pagesContent.search.hero.title}</h1>
-              <p className="mt-6 max-w-xl text-base font-semibold leading-8 opacity-70">{pagesContent.search.hero.description}</p>
-            </div>
-            <form action="/search" className="self-end rounded-[2rem] border border-[var(--editable-border)] bg-[var(--editable-page-bg,#fff7ee)] p-4 sm:p-5">
+      <main className="min-h-screen bg-[#f2f5f9] text-[#333]">
+        <section className="relative border-b-2 border-[#2098d4] bg-[#111] text-white">
+          <div className="absolute inset-0 bg-black/60" />
+          <div className="relative mx-auto max-w-[1180px] px-4 py-8 text-center sm:py-10">
+            <h1 className="text-3xl font-normal">Search capsigrow classifieds</h1>
+            <p className="mt-4 text-xl">Find local ads, deals, jobs, property, services and more.</p>
+            <form action="/search" className="mx-auto mt-6 flex max-w-[750px] flex-col items-stretch gap-3 sm:flex-row">
               <input type="hidden" name="master" value="1" />
-              <label className="flex items-center gap-3 rounded-2xl border border-[var(--editable-border)] bg-white px-4 py-3">
-                <Search className="h-5 w-5 opacity-45" />
-                <input name="q" defaultValue={query} placeholder={pagesContent.search.hero.placeholder} className="min-w-0 flex-1 bg-transparent text-base font-bold outline-none placeholder:text-current/35" />
-              </label>
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                <label className="flex items-center gap-2 rounded-2xl border border-[var(--editable-border)] bg-white px-4 py-3">
-                  <Filter className="h-4 w-4 opacity-45" />
-                  <input name="category" defaultValue={category} placeholder="Category" className="min-w-0 flex-1 bg-transparent text-sm font-bold outline-none placeholder:text-current/35" />
-                </label>
-                <select name="task" defaultValue={task} className="rounded-2xl border border-[var(--editable-border)] bg-white px-4 py-3 text-sm font-black outline-none">
-                  <option value="">All content types</option>
-                  {enabledTasks.map((item) => <option key={item.key} value={item.key}>{item.label}</option>)}
-                </select>
-              </div>
-              <button className="mt-3 inline-flex h-12 w-full items-center justify-center rounded-2xl bg-[var(--editable-page-text,#2f1d16)] px-6 text-sm font-black uppercase tracking-[0.18em] text-[var(--editable-page-bg,#fff7ee)] transition hover:-translate-y-0.5" type="submit">Search</button>
+              <input name="q" defaultValue={query} placeholder={pagesContent.search.hero.placeholder} className="min-h-[49px] min-w-0 flex-1 bg-black/55 px-5 text-lg text-white outline-none placeholder:text-[#c9d9e9]" />
+              <button type="submit" className="inline-flex min-h-[49px] items-center justify-center bg-[#ff5353] px-7 text-lg font-bold">
+                <Search className="mr-2 h-5 w-5" /> Search
+              </button>
+              <Link href="/classified" className="inline-flex min-h-[49px] items-center justify-center rounded-sm bg-[#91a5a8] px-9 text-lg font-bold">
+                <Settings2 className="mr-2 h-5 w-5" /> Refine
+              </Link>
             </form>
-          </div>
-
-          <div className="mt-10 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.24em] opacity-50">{results.length} results</p>
-              <h2 className="mt-2 text-3xl font-black tracking-[-0.06em]">{query ? `Results for “${query}”` : pagesContent.search.resultsTitle}</h2>
+            <div className="mx-auto mt-4 flex max-w-[750px] flex-col gap-3 sm:flex-row">
+              <input name="category" form="search-filters" defaultValue={category} placeholder="Filter by category" className="min-h-[42px] min-w-0 flex-1 bg-black/40 px-5 text-sm text-white outline-none placeholder:text-[#c9d9e9]" />
+              <select name="task" form="search-filters" defaultValue={task} className="min-h-[42px] min-w-0 flex-1 bg-black/40 px-5 text-sm text-white outline-none">
+                <option value="">All content types</option>
+                {enabledTasks.map((item) => <option key={item.key} value={item.key}>{item.label}</option>)}
+              </select>
             </div>
-            <Link href="/article" className="inline-flex items-center gap-2 rounded-full border border-[var(--editable-border)] bg-white px-5 py-3 text-sm font-black">Browse latest <ArrowRight className="h-4 w-4" /></Link>
+            <form id="search-filters" action="/search"><input type="hidden" name="master" value="1" /></form>
+          </div>
+        </section>
+
+        <div className="mx-auto max-w-[1140px] px-4 py-8">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-bold text-[#20242a]">{query ? `Results for "${query}"` : pagesContent.search.resultsTitle}</h2>
+              <p className="mt-1 text-sm text-[#656565]">{results.length} results found</p>
+            </div>
+            <Link href="/contact" className="inline-flex h-[38px] items-center justify-center rounded-sm bg-[#91a5a8] px-5 text-sm font-bold text-white">
+              <Plus className="mr-1 h-4 w-4 fill-white" /> Post your Free Ad!
+            </Link>
           </div>
 
           {results.length ? (
-            <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-7 lg:grid-cols-2">
               {results.map((post, index) => <SearchResultCard key={post.id || post.slug} post={post} index={index} />)}
             </div>
           ) : (
-            <div className="mt-8 rounded-[2rem] border border-dashed border-[var(--editable-border)] bg-white/70 p-10 text-center">
-              <p className="text-2xl font-black tracking-[-0.04em]">No matching posts found.</p>
-              <p className="mt-3 text-sm font-semibold opacity-60">Try a different keyword, task type, or category.</p>
+            <div className="rounded border border-[#d6dce1] bg-white p-10 text-center">
+              <p className="text-xl font-bold text-[#20242a]">No matching posts found.</p>
+              <p className="mt-3 text-sm text-[#656565]">Try a different keyword, content type, or category.</p>
+              <Link href="/classified" className="mt-5 inline-flex rounded-sm bg-[#2098d4] px-5 py-2 text-sm text-white shadow-[0_8px_18px_rgba(32,152,212,0.3)]">Browse all classifieds</Link>
             </div>
           )}
-        </section>
+
+          <div className="mt-10 overflow-hidden rounded border border-[#d6dce1] bg-white">
+            <h3 className="bg-[#f6f6f6] px-5 py-4 text-xl font-bold">Discover more</h3>
+            {['Second-hand mobile deals', 'Local property listings', 'Jobs and home services'].map((item) => (
+              <Link key={item} href="/classified" className="flex items-center justify-between border-t border-[#edf0f2] px-5 py-4 text-lg hover:bg-[#f8fbfd]">
+                <span>{item}</span>
+                <ChevronRight className="h-6 w-6 text-[#9aa2aa]" />
+              </Link>
+            ))}
+          </div>
+        </div>
       </main>
     </EditableSiteShell>
   )
