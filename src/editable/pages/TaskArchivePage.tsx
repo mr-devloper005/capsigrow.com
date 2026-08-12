@@ -30,9 +30,21 @@ const getImages = (post: SitePost) => {
 }
 const getImage = (post: SitePost) => getImages(post)[0] || classifiedFallbackImage
 const getCategory = (post: SitePost, fallback = 'Classified') => asText(getContent(post).category) || post.tags?.[0] || fallback
+const stripHtml = (value: string) => {
+  let s = value
+  for (let i = 0; i < 2; i++) {
+    s = s
+      .replace(/&#(\d+);/g, (_m: string, code: string) => String.fromCharCode(Number(code)))
+      .replace(/&#x([0-9a-f]+);/gi, (_m: string, hex: string) => String.fromCharCode(parseInt(hex, 16)))
+      .replace(/&amp;/gi, '&').replace(/&quot;/gi, '"').replace(/&#39;/g, "'").replace(/&lt;/gi, '<').replace(/&gt;/gi, '>')
+      .replace(/<[^>]*>/g, ' ')
+  }
+  return s.replace(/\s+/g, ' ').trim()
+}
 const getSummary = (post: SitePost) => {
   const content = getContent(post)
-  return post.summary || asText(content.description) || asText(content.excerpt) || asText(content.body) || 'Open this ad to view price, location, seller and service details.'
+  const raw = post.summary || asText(content.description) || asText(content.excerpt) || asText(content.body) || 'Open this ad to view price, location, seller and service details.'
+  return stripHtml(raw)
 }
 const getField = (post: SitePost, keys: string[]) => {
   const content = getContent(post)

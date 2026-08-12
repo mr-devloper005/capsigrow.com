@@ -2,7 +2,6 @@
 
 import { FormEvent, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { pagesContent } from '@/editable/content/pages.content'
 
 const USERS_KEY = 'slot4:local-auth-users'
 const SESSION_KEY = 'slot4:local-auth-session'
